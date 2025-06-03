@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistics - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Pharmacy Statistics</h1>
+
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <!-- Category Distribution Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h5 mb-0">Sales by Category</h2>
+                </div>
+                <div class="card-body text-center">
+                    <img src="data:image/png;base64,{{ charts.category_chart }}" 
+                         alt="Category Chart" 
+                         class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Medicines Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h2 class="h5 mb-0">Top 10 Selling Medicines</h2>
+                </div>
+                <div class="card-body text-center">
+                    <img src="data:image/png;base64,{{ charts.top_medicines_chart }}" 
+                         alt="Top Medicines" 
+                         class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Statistics -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Sales Statistics</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h3 class="h6">Total Sales</h3>
+                        <p class="h4">₽{{ sales_stats.total_sales|floatformat:2 }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h3 class="h6">Average Sale</h3>
+                        <p class="h4">₽{{ sales_stats.avg_sale|floatformat:2 }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h3 class="h6">Median Sale</h3>
+                        <p class="h4">₽{{ sales_stats.median_sale|floatformat:2 }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box">
+                        <h3 class="h6">Mode Sale</h3>
+                        <p class="h4">₽{{ sales_stats.mode_sale|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Age Statistics -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h2 class="h5 mb-0">Customer Age Statistics</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="stat-box">
+                        <h3 class="h6">Average Age</h3>
+                        <p class="h4">{{ age_stats.avg_age|floatformat:1 }} years</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stat-box">
+                        <h3 class="h6">Median Age</h3>
+                        <p class="h4">{{ age_stats.median_age|floatformat:1 }} years</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Statistics -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h2 class="h5 mb-0">Category Statistics</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Total Quantity Sold</th>
+                            <th>Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in category_stats %}
+                        <tr>
+                            <td>{{ category.medicine__category__name }}</td>
+                            <td>{{ category.total_quantity }}</td>
+                            <td>₽{{ category.total_revenue|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medicines List -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning">
+            <h2 class="h5 mb-0">Medicines Sales</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Medicine Name</th>
+                            <th>Total Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medicine in medicines_stats %}
+                        <tr>
+                            <td>{{ medicine.name }}</td>
+                            <td>₽{{ medicine.total_sales|default:0|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customers List -->
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h2 class="h5 mb-0">Customers ({{ total_customers }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Date Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer.username }}</td>
+                            <td>{{ customer.get_full_name|default:"-" }}</td>
+                            <td>{{ customer.email|default:"-" }}</td>
+                            <td>{{ customer.date_joined|date:"d.m.Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-box {
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+.stat-box h3 {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+.stat-box p {
+    margin-bottom: 0;
+    color: #212529;
+}
+</style>
+{% endblock %} 

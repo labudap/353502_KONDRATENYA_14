@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Glossary - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Medical Terms Glossary</h1>
+    
+    <div class="row">
+        <div class="col-md-8">
+            {% regroup terms by term|first|upper as letter_groups %}
+            
+            <div class="accordion" id="glossaryAccordion">
+                {% for letter_group in letter_groups %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ letter_group.grouper }}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
+                                    type="button" 
+                                    data-bs-toggle="collapse" 
+                                    data-bs-target="#collapse{{ letter_group.grouper }}" 
+                                    aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
+                                    aria-controls="collapse{{ letter_group.grouper }}">
+                                {{ letter_group.grouper }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ letter_group.grouper }}" 
+                             class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
+                             aria-labelledby="heading{{ letter_group.grouper }}">
+                            <div class="accordion-body">
+                                {% for item in letter_group.list %}
+                                    <div class="mb-4">
+                                        <h5>{{ item.term }}</h5>
+                                        <p>{{ item.definition }}</p>
+                                        <small class="text-muted">Added: {{ item.date_added|date:"d/m/Y" }}</small>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-info">
+                        No terms available in the glossary.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Navigation</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        {% for letter_group in letter_groups %}
+                            <a href="#collapse{{ letter_group.grouper }}" 
+                               class="btn btn-outline-primary btn-sm m-1"
+                               data-bs-toggle="collapse"
+                               aria-expanded="false"
+                               aria-controls="collapse{{ letter_group.grouper }}">
+                                {{ letter_group.grouper }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

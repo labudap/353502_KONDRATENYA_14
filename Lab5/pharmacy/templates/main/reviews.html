@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Отзывы клиентов{% endblock %}
+
+{% block extra_css %}
+<style>
+    .review-card {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .review-body {
+        padding: 20px;
+    }
+    .review-footer {
+        padding: 10px 20px;
+        background-color: #f8f9fa;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        font-size: 0.9em;
+        color: #6c757d;
+    }
+    .rating {
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .delete-review {
+        color: #dc3545;
+        cursor: pointer;
+        border: none;
+        background: none;
+        padding: 0;
+    }
+    .delete-review:hover {
+        color: #c82333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Отзывы наших клиентов</h1>
+
+    {% if user.is_authenticated %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Оставить отзыв</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group mb-3">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mb-4">
+        Чтобы оставить отзыв, пожалуйста, <a href="{% url 'main:login' %}">войдите</a> в систему.
+    </div>
+    {% endif %}
+
+    <div class="reviews-list">
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-header">
+                <div>
+                    <strong>{{ review.user.get_full_name|default:review.user.username }}</strong>
+                    <span class="rating ms-2">★ {{ review.rating }}/5</span>
+                </div>
+                {% if user == review.user %}
+                <form method="post" action="{% url 'main:delete_review' review.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-review" onclick="return confirm('Вы уверены, что хотите удалить этот отзыв?')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            <div class="review-body">
+                {{ review.text|linebreaks }}
+            </div>
+            <div class="review-footer">
+                {{ review.date|date:"d.m.Y H:i" }}
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            Пока нет отзывов. Будьте первым, кто оставит отзыв!
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

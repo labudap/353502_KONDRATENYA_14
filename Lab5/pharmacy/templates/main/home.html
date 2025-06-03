@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Pharmacy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calendar-container {
+        width: 300px;
+        margin: 20px auto;
+    }
+    .calendar {
+        width: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 10px;
+    }
+    .calendar table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .calendar th, .calendar td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #eee;
+    }
+    .calendar th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    .calendar .current-day {
+        background: #e9ecef;
+        font-weight: bold;
+    }
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .calendar-header h3 {
+        margin: 0;
+        min-width: 200px;
+        text-align: center;
+    }
+    .calendar-nav {
+        cursor: pointer;
+        padding: 5px 10px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 4px;
+    }
+    .calendar-nav:hover {
+        background: #0056b3;
+    }
+    .other-month {
+        color: #ccc;
+    }
+    .time-display {
+        text-align: center;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .time-display .time {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 5px;
+    }
+    .time-display .timezone {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to Our Pharmacy</h1>
+    <p class="lead">Your trusted source for quality medicines and healthcare products.</p>
+    <hr class="my-4">
+</div>
+
+<div class="calendar-container">
+    <div class="calendar">
+        <div class="calendar-header">
+            <button class="calendar-nav" id="prevMonth">&lt;</button>
+            <h3 id="currentMonth"></h3>
+            <button class="calendar-nav" id="nextMonth">&gt;</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Пн</th>
+                    <th>Вт</th>
+                    <th>Ср</th>
+                    <th>Чт</th>
+                    <th>Пт</th>
+                    <th>Сб</th>
+                    <th>Вс</th>
+                </tr>
+            </thead>
+            <tbody id="calendarBody"></tbody>
+        </table>
+    </div>
+    <div class="time-display">
+        <div class="time" id="currentTime"></div>
+        <div class="timezone" id="timeZone"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Функция форматирования времени
+        function formatTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Функция обновления времени
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = formatTime(now);
+            
+            // Получаем часовой пояс
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const offset = -(now.getTimezoneOffset() / 60);
+            const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
+            document.getElementById('timeZone').textContent = `${timeZone} (GMT${offsetStr})`;
+        }
+
+        // Обновляем время каждую секунду
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Функция получения названия месяца
+        function getMonthName(month) {
+            const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                          'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            return months[month];
+        }
+
+        // Функция получения количества дней в месяце
+        function getDaysInMonth(year, month) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        // Функция получения первого дня месяца (0 = понедельник, 6 = воскресенье)
+        function getFirstDayOfMonth(year, month) {
+            const firstDay = new Date(year, month, 1).getDay();
+            return firstDay === 0 ? 6 : firstDay - 1;
+        }
+
+        // Инициализация начальных значений
+        let currentYear = {{ calendar.year }};
+        let currentMonth = {{ calendar.month }} - 1; // JavaScript месяцы начинаются с 0
+
+        function updateCalendar() {
+            // Получаем необходимые данные для календаря
+            const totalDays = getDaysInMonth(currentYear, currentMonth);
+            const firstDayOfWeek = getFirstDayOfMonth(currentYear, currentMonth);
+            
+            // Получаем дни предыдущего месяца
+            const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+            const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+            const prevMonthDays = getDaysInMonth(prevYear, prevMonth);
+
+            // Устанавливаем заголовок календаря
+            document.getElementById('currentMonth').textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+            
+            let calendarBody = document.getElementById('calendarBody');
+            calendarBody.innerHTML = '';
+
+            let date = 1;
+            const weeks = Math.ceil((totalDays + firstDayOfWeek) / 7);
+
+            // Получаем текущую дату для выделения текущего дня
+            const now = new Date();
+            const today = now.getDate();
+            const thisMonth = now.getMonth();
+            const thisYear = now.getFullYear();
+
+            for (let i = 0; i < weeks; i++) {
+                const row = document.createElement('tr');
+                
+                for (let j = 0; j < 7; j++) {
+                    const cell = document.createElement('td');
+                    
+                    if (i === 0 && j < firstDayOfWeek) {
+                        // Добавляем дни предыдущего месяца
+                        cell.textContent = prevMonthDays - (firstDayOfWeek - j - 1);
+                        cell.classList.add('other-month');
+                    } else if (date > totalDays) {
+                        // Добавляем дни следующего месяца
+                        cell.textContent = date - totalDays;
+                        cell.classList.add('other-month');
+                        date++;
+                    } else {
+                        cell.textContent = date;
+                        if (date === today && currentMonth === thisMonth && currentYear === thisYear) {
+                            cell.classList.add('current-day');
+                        }
+                        date++;
+                    }
+                    
+                    row.appendChild(cell);
+                }
+                
+                calendarBody.appendChild(row);
+            }
+        }
+
+        // Обработчики кнопок навигации
+        document.getElementById('prevMonth').addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendar();
+        });
+
+        // Инициализация календаря
+        updateCalendar();
+    });
+</script>
+{% endblock %} 

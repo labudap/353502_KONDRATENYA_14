@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Vacancies - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Vacancies</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="alert alert-info">
+                <h4 class="alert-heading">Join our team!</h4>
+                <p>We are always happy to welcome talented and passionate specialists. Check out our current job openings.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for vacancy in vacancies %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">{{ vacancy.title }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Salary:</strong> {{ vacancy.salary_range }}<br>
+                            <strong>Date Posted:</strong> {{ vacancy.date_posted|date:"d.m.Y" }}
+                        </div>
+                        
+                        <h6>Description:</h6>
+                        <p>{{ vacancy.description|linebreaks }}</p>
+                        
+                        <h6>Requirements:</h6>
+                        <p>{{ vacancy.requirements|linebreaks }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col">
+                <div class="alert alert-info">
+                    There are currently no open positions. Please check back later.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

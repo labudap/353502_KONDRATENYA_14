@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ news.title }} - Pharmacy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .news-image {
+        max-height: 400px;
+        object-fit: cover;
+        width: 100%;
+        border-radius: 8px;
+    }
+    .news-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        white-space: pre-line;
+    }
+    .news-meta {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    .news-meta i {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'main:news_list' %}">News</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ news.title }}</li>
+        </ol>
+    </nav>
+
+    <article class="mb-5">
+        <h1 class="mb-3">{{ news.title }}</h1>
+        
+        <div class="news-meta">
+            <i class="fas fa-calendar-alt"></i>
+            {{ news.date_published|date:"M d, Y H:i" }}
+        </div>
+
+        {% if news.image %}
+            <div class="mb-4">
+                <img src="{{ news.image.url }}" class="news-image shadow" alt="{{ news.title }}">
+            </div>
+        {% endif %}
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="news-content">
+                    {{ news.content }}
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <div class="text-center mb-5">
+        <a href="{% url 'main:news_list' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to News List
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+{% endblock %} 

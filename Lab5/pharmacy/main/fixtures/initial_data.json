@@ -1,0 +1,65 @@
+[
+    {
+        "model": "main.category",
+        "pk": 1,
+        "fields": {
+            "name": "Pain Relief",
+            "description": "Medications for pain management"
+        }
+    },
+    {
+        "model": "main.category",
+        "pk": 2,
+        "fields": {
+            "name": "Cold and Flu",
+            "description": "Medications for cold and flu symptoms"
+        }
+    },
+    {
+        "model": "main.category",
+        "pk": 3,
+        "fields": {
+            "name": "Vitamins",
+            "description": "Various vitamins and supplements"
+        }
+    },
+    {
+        "model": "main.medicine",
+        "pk": 1,
+        "fields": {
+            "code": "PR001",
+            "name": "Ibuprofen",
+            "description": "Non-steroidal anti-inflammatory drug (NSAID)",
+            "instructions": "Take with food. Do not exceed 6 tablets per day.",
+            "price": "5.99",
+            "stock": 100,
+            "category": 1
+        }
+    },
+    {
+        "model": "main.medicine",
+        "pk": 2,
+        "fields": {
+            "code": "CF001",
+            "name": "Cold Relief Plus",
+            "description": "Multi-symptom cold and flu relief",
+            "instructions": "Take every 4-6 hours as needed.",
+            "price": "8.99",
+            "stock": 50,
+            "category": 2
+        }
+    },
+    {
+        "model": "main.medicine",
+        "pk": 3,
+        "fields": {
+            "code": "VT001",
+            "name": "Vitamin C 1000mg",
+            "description": "High strength vitamin C supplement",
+            "instructions": "Take one tablet daily with food.",
+            "price": "12.99",
+            "stock": 75,
+            "category": 3
+        }
+    }
+] 

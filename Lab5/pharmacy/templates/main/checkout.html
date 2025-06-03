@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Checkout</h1>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                    <h5 class="mb-0">Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>{{ item.medicine.name }}</td>
+                                    <td>${{ item.medicine.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>${{ item.get_cost }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td><strong>${{ total_price }}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                    <h5 class="mb-0">Confirm Order</h5>
+                        </div>
+                        <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Place Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if company_info %}
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <h1 class="mb-4">{{ company_info.title }}</h1>
+                <div class="card">
+                    <div class="card-body">
+                        {{ company_info.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                {% if company_info.logo %}
+                    <img src="{{ company_info.logo.url }}" alt="Company Logo" class="img-fluid rounded mb-4">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="mb-4">Our History</h2>
+                <div class="card">
+                    <div class="card-body">
+                        {{ company_info.history|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if company_info.video_url %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="mb-4">Watch Our Story</h2>
+                <div class="ratio ratio-16x9">
+                    <iframe src="{{ company_info.video_url }}" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            <h2>Welcome to Our Pharmacy</h2>
+            <p>We are a leading pharmacy committed to providing high-quality healthcare products and services to our customers.</p>
+            <p>Our mission is to improve the health and wellbeing of our community through professional pharmaceutical care and exceptional customer service.</p>
+        </div>
+    {% endif %}
+
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Our Mission</h3>
+                    <p class="card-text">To provide accessible, high-quality healthcare products and professional pharmacy services to our community.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Our Vision</h3>
+                    <p class="card-text">To be the most trusted pharmacy in the region, known for excellence in healthcare services and customer care.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Our Values</h3>
+                    <ul class="list-unstyled">
+                        <li>✓ Quality</li>
+                        <li>✓ Integrity</li>
+                        <li>✓ Customer Care</li>
+                        <li>✓ Professional Excellence</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

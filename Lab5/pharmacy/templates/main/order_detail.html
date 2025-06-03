@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'main:profile' %}">My Profile</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Order #{{ order.id }}</li>
+        </ol>
+    </nav>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Order #{{ order.id }}</h5>
+            <span class="badge bg-success">Completed</span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted">Order Date</h6>
+                    <p>{{ order.date|date:"F j, Y, g:i a" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted">Total Amount</h6>
+                    <p>${{ order.total_amount }}</p>
+                </div>
+            </div>
+
+            <h6 class="mb-3">Order Items</h6>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.medicine.name }}</td>
+                            <td>${{ item.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.get_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td><strong>${{ order.total_amount }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-3">Delivery Information</h6>
+                    <p class="mb-1"><strong>Name:</strong> {{ order.customer.username }}</p>
+                    <p class="mb-1"><strong>Email:</strong> {{ order.customer.email }}</p>
+                    <p class="mb-1"><strong>Phone:</strong> {{ order.customer.profile.phone|default:"Not provided" }}</p>
+                    <p class="mb-1"><strong>Address:</strong> {{ order.customer.profile.address|default:"Not provided" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'main:medicine_list' %}" class="btn btn-primary">
+            Continue Shopping
+        </a>
+    </div>
+</div>
+{% endblock %} 

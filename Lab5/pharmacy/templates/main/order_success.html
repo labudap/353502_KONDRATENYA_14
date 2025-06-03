@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmed - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center py-5">
+                <i class="bi bi-check-circle text-success" style="font-size: 5rem;"></i>
+                <h1 class="mt-4">Thank You for Your Order!</h1>
+                <p class="lead">Your order has been successfully placed.</p>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Order Number:</div>
+                            <div class="col-sm-8">{{ order.order_number }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Order Date:</div>
+                            <div class="col-sm-8">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Payment Method:</div>
+                            <div class="col-sm-8">{{ order.payment_method }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Total Amount:</div>
+                            <div class="col-sm-8">${{ order.total_amount }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Name:</div>
+                            <div class="col-sm-8">{{ order.shipping_name }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Address:</div>
+                            <div class="col-sm-8">
+                                {{ order.shipping_address }}<br>
+                                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Phone:</div>
+                            <div class="col-sm-8">{{ order.shipping_phone }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">Email:</div>
+                            <div class="col-sm-8">{{ order.shipping_email }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items.all %}
+                                        <tr>
+                                            <td>{{ item.medicine.name }}</td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td class="text-end">${{ item.price }}</td>
+                                            <td class="text-end">${{ item.total_price }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end">Subtotal:</td>
+                                        <td class="text-end">${{ order.subtotal }}</td>
+                                    </tr>
+                                    {% if order.discount %}
+                                        <tr>
+                                            <td colspan="3" class="text-end">Discount:</td>
+                                            <td class="text-end text-success">-${{ order.discount }}</td>
+                                        </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td colspan="3" class="text-end">Shipping:</td>
+                                        <td class="text-end">${{ order.shipping_cost }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                        <td class="text-end"><strong>${{ order.total_amount }}</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <p>A confirmation email has been sent to {{ order.shipping_email }}</p>
+                    <div class="mt-4">
+                        <a href="{% url 'main:medicine_list' %}" class="btn btn-primary me-2">
+                            Continue Shopping
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            Track Order
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

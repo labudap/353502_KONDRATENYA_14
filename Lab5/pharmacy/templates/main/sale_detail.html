@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sale Detail #{{ sale.id }} - Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Sale Detail #{{ sale.id }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <h6 class="mb-3">Customer Details:</h6>
+                    <div><strong>Username:</strong> {{ sale.customer.username }}</div>
+                    <div><strong>Email:</strong> {{ sale.customer.email }}</div>
+                </div>
+                <div class="col-sm-6">
+                    <h6 class="mb-3">Order Details:</h6>
+                    <div><strong>Order Date:</strong> {{ sale.date|date:"d/m/Y H:i" }}</div>
+                    <div><strong>Total Amount:</strong> ${{ sale.total_amount }}</div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in sale.items.all %}
+                        <tr>
+                            <td>{{ item.medicine.name }}</td>
+                            <td>${{ item.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.get_total }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td><strong>${{ sale.total_amount }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{% url 'main:sales_list' %}" class="btn btn-secondary">Back to Sales List</a>
+    </div>
+</div>
+{% endblock %} 
